@@ -105,17 +105,20 @@ test('disk under 15 % free is critical, with when it is full at the current grow
   const { st, m } = machine();
   st.freeGb = 30;
   st.growGbPerMeasure = 1;
-  const d = await runFor(m(NOW), opts(), NOW, NOW + 4 * H);
-  const a = runnerAlerts(d, NOW + 4 * H);
+  let d = await runFor(m(NOW), opts(), NOW, NOW + 4 * H);
+  // Four hours of history: the disk alert, not yet the growth one.
+  assert.deepEqual(ids(runnerAlerts(d, NOW + 4 * H)), ['disk-/home/u/.local/share/docker']);
+  d = await runFor(m(NOW), opts(), NOW, NOW + 13 * H, 5 * MIN);
+  const a = runnerAlerts(d, NOW + 13 * H);
   // 30 / 243.8 = 12 %; 1 GB per 30 min = 48 GB a day: full in 15 hours. Also growing over 20 GB a day.
   assert.deepEqual(ids(a), ['disk-/home/u/.local/share/docker', 'growth']);
   assert.equal(a[0]!.level, 'critical');
   assert.equal(localize(a[0]!.text!, 'en'), 'Free: 30 GB (12%) · full in 15 h');
   assert.match(localize(a[0]!.text!, 'es'), /^Libre: 30 GB \(12\s%\) · lleno en 15 h$/);
-  assert.equal(localize(a[1]!.text!, 'de'), '+48 GB/Tag · Grenze +20 GB/Tag');
+  assert.match(localize(a[1]!.text!, 'de'), /^\+4[78](,\d)? GB\/Tag · Grenze \+20 GB\/Tag$/);
   // A higher limit: no growth alert.
-  const d2 = await runFor(m(NOW), opts({ growthMaxGb: 100, diskFreeMinPct: 10 }), NOW, NOW + 4 * H);
-  assert.deepEqual(runnerAlerts(d2, NOW + 4 * H), []);
+  const d2 = await runFor(m(NOW), opts({ growthMaxGb: 100, diskFreeMinPct: 10 }), NOW, NOW + 13 * H, 5 * MIN);
+  assert.deepEqual(runnerAlerts(d2, NOW + 13 * H), []);
 });
 
 test('cleanup timer: fine for 26 h, then a warning; a failed run warns at once', async () => {

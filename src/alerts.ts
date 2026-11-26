@@ -6,7 +6,8 @@
  *   Docker itself not answering (critical).
  * - The disk holding Docker's data under `diskFreeMinPct` free (15 % by
  *   default): critical, with how long it lasts at the current growth.
- * - The caches growing faster than `growthMaxGb` a day (20 GB): warning.
+ * - The caches growing faster than `growthMaxGb` a day (20 GB), once there
+ *   are 12 hours of history: warning.
  * - A job waiting for a runner longer than `pendingMaxMs` (15 min), from
  *   GitLab's or GitHub's API: warning.
  * - The cleanup timer not run for `timerMaxMs` (26 h), or its last run
@@ -40,6 +41,9 @@ function minutesText(l: Lang, ms: number): string {
   if (m >= 120) return `${intText(l, Math.round(m / 60))} ${w(l, { en: 'h', es: 'h', de: 'Std.', 'zh-Hans': '小时', 'zh-Hant': '小時' })}`;
   return `${intText(l, m)} ${w(l, { en: 'min', es: 'min', de: 'Min.', 'zh-Hans': '分钟', 'zh-Hant': '分鐘' })}`;
 }
+
+/** History needed before the growth alert speaks. */
+export const GROWTH_ALERT_SPAN_MS = 12 * 3_600_000;
 
 const dayOf = (at: number) => new Date(at).toISOString().slice(0, 10);
 
@@ -93,7 +97,8 @@ export function runnerAlerts(data: RunnersData | undefined, now: number): Alert[
   }
 
   const g = local?.growth.perDay;
-  if (g != null && g > t.growthMax) {
+  // Not from a couple of hours: one big job would read as tens of GB a day.
+  if (g != null && g > t.growthMax && (local?.growth.spanMs ?? 0) >= GROWTH_ALERT_SPAN_MS) {
     out.push({
       id: `growth-${dayOf(now)}`,
       level: 'warn',
