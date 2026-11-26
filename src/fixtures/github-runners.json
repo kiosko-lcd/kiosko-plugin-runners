@@ -1,0 +1,60 @@
+{
+  "total_count": 2,
+  "runners": [
+    {
+      "id": 7,
+      "name": "build-box",
+      "os": "linux",
+      "status": "online",
+      "busy": true,
+      "ephemeral": false,
+      "labels": [
+        {
+          "id": 1,
+          "name": "self-hosted",
+          "type": "read-only"
+        },
+        {
+          "id": 2,
+          "name": "Linux",
+          "type": "read-only"
+        },
+        {
+          "id": 3,
+          "name": "X64",
+          "type": "read-only"
+        },
+        {
+          "id": 4,
+          "name": "gpu",
+          "type": "custom"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "mac-mini",
+      "os": "macOS",
+      "status": "offline",
+      "busy": false,
+      "ephemeral": false,
+      "labels": [
+        {
+          "id": 1,
+          "name": "self-hosted",
+          "type": "read-only"
+        },
+        {
+          "id": 5,
+          "name": "macOS",
+          "type": "read-only"
+        },
+        {
+          "id": 6,
+          "name": "ARM64",
+          "type": "read-only"
+        }
+      ]
+    }
+  ]
+}

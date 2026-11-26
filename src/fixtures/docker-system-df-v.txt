@@ -1,0 +1,24 @@
+Images space usage:
+
+REPOSITORY             TAG       IMAGE ID       CREATED       SIZE      SHARED SIZE   UNIQUE SIZE   CONTAINERS
+gitlab/gitlab-runner   v19.5.1   1a2b3c4d5e6f   3 weeks ago   385MB     0B            385MB         1
+
+Containers space usage:
+
+CONTAINER ID   IMAGE     COMMAND   LOCAL VOLUMES   SIZE      CREATED   STATUS    NAMES
+
+Local Volumes space usage:
+
+VOLUME NAME                                                                            LINKS     SIZE
+runner-aaaa1111aaaabbbbccccdddd0000-cache-3c3f060a0374fc8bc39395164f415a70-protected   0         561.2MB
+runner-aaaa1111aaaabbbbccccdddd0000-cache-c33bcaa1fd2c77edfc3893b41966cea8-protected   0         2.1GB
+runner-bbbb2222aaaabbbbccccdddd0000-cache-3c3f060a0374fc8bc39395164f415a70             0         120MB
+runner-bbbb2222aaaabbbbccccdddd0000-cache-c33bcaa1fd2c77edfc3893b41966cea8             0         890.5MB
+runner-cccc3333aaaabbbbccccdddd0000-cache-3c3f060a0374fc8bc39395164f415a70-protected   0         0B
+runner-cccc3333aaaabbbbccccdddd0000-cache-c33bcaa1fd2c77edfc3893b41966cea8-protected   0         1.25GB
+2c001f224d8d0211afca4ab0fdb16d973fdf7d386775aca7fb26ac0361bf2ed3                       0         4.2GB
+shop_db                                                                                0         23.67MB
+
+Build cache usage: 0B
+
+CACHE ID   CACHE TYPE   SIZE      CREATED   LAST USED   USAGE     SHARED

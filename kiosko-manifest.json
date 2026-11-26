@@ -1,0 +1,866 @@
+{
+  "manifest": 1,
+  "id": "runners",
+  "package": "kiosko-plugin-runners",
+  "name": {
+    "en": "CI runners",
+    "es": "Runners de CI",
+    "de": "CI-Runner",
+    "zh-Hans": "CI Runner",
+    "zh-Hant": "CI Runner"
+  },
+  "version": "0.1.0",
+  "description": {
+    "en": "Your CI runners on the panel: whether the GitLab runner container is up and the jobs it runs, what its cache volumes cost on disk and how fast they grow, the free space left where Docker keeps them and when it runs out, and when the cleanup last ran; optionally runner status and waiting jobs from GitLab's API, GitHub Actions self-hosted runners and the runner's Prometheus metrics. Read-only: it never prunes or stops anything.",
+    "es": "Tus runners de CI en el panel: si el contenedor del runner de GitLab está en marcha y los trabajos que corre, lo que ocupan en disco sus volúmenes de caché y lo rápido que crecen, el espacio libre que queda donde Docker los guarda y cuándo se acaba, y cuándo corrió la limpieza; opcionalmente el estado de los runners y los trabajos en cola de la API de GitLab, los runners propios de GitHub Actions y las métricas Prometheus del runner. Solo lectura: nunca poda ni para nada.",
+    "de": "Deine CI-Runner auf dem Panel: ob der GitLab-Runner-Container läuft und welche Jobs er ausführt, was seine Cache-Volumes auf der Platte belegen und wie schnell sie wachsen, wie viel Platz dort, wo Docker sie ablegt, noch frei ist und wann er ausgeht, und wann die Bereinigung zuletzt lief; optional Runner-Status und wartende Jobs aus der GitLab-API, selbst gehostete GitHub-Actions-Runner und die Prometheus-Metriken des Runners. Nur lesend: Es räumt nie auf und stoppt nichts.",
+    "zh-Hans": "在副屏上查看你的 CI Runner：GitLab Runner 容器是否在运行及其作业，缓存卷占用多少磁盘、增长多快，Docker 存放它们的磁盘还剩多少空间、何时占满，以及上次清理时间；还可选显示 GitLab API 中的 Runner 状态和排队作业、GitHub Actions 自托管 Runner 以及 Runner 的 Prometheus 指标。只读：从不清理或停止任何东西。",
+    "zh-Hant": "在面板上查看你的 CI Runner：GitLab Runner 容器是否在執行及其作業，快取磁碟區占用多少磁碟、增長多快，Docker 存放它們的磁碟還剩多少空間、何時占滿，以及上次清理時間；還可選顯示 GitLab API 中的 Runner 狀態和排隊作業、GitHub Actions 自架 Runner 以及 Runner 的 Prometheus 指標。唯讀：從不清理或停止任何東西。"
+  },
+  "author": "Loksly",
+  "license": "MIT",
+  "homepage": "https://github.com/kiosko-lcd/kiosko-plugin-runners#readme",
+  "repository": "https://github.com/kiosko-lcd/kiosko-plugin-runners",
+  "icon": "server",
+  "sdk": "^0.2.0",
+  "platforms": [
+    "linux",
+    "darwin",
+    "win32"
+  ],
+  "languages": [
+    "en",
+    "es",
+    "de",
+    "zh-Hant",
+    "zh-Hans"
+  ],
+  "categories": [
+    "dev"
+  ],
+  "tags": [
+    "ci",
+    "gitlab-runner",
+    "github-actions",
+    "docker",
+    "jobs",
+    "cache",
+    "disk"
+  ],
+  "permissions": {
+    "network": [
+      "gitlab.com",
+      "api.github.com",
+      "lan",
+      "user"
+    ],
+    "exec": [
+      "docker",
+      "podman",
+      "systemctl"
+    ],
+    "files": [
+      "user"
+    ]
+  },
+  "riskyOptions": [
+    {
+      "path": "runners/runners: dockerHost",
+      "risk": [
+        "network"
+      ],
+      "secret": false
+    },
+    {
+      "path": "runners/runners: configToml",
+      "risk": [
+        "path"
+      ],
+      "secret": false
+    },
+    {
+      "path": "runners/runners: gitlabToken",
+      "risk": [],
+      "secret": true
+    },
+    {
+      "path": "runners/runners: gitlabUrl",
+      "risk": [
+        "network"
+      ],
+      "secret": false
+    },
+    {
+      "path": "runners/runners: githubToken",
+      "risk": [],
+      "secret": true
+    },
+    {
+      "path": "runners/runners: githubApi",
+      "risk": [
+        "network"
+      ],
+      "secret": false
+    },
+    {
+      "path": "runners/runners: metricsUrl",
+      "risk": [
+        "network"
+      ],
+      "secret": false
+    }
+  ],
+  "requires": [],
+  "optional": [],
+  "widgets": [
+    {
+      "type": "runners/now",
+      "name": {
+        "en": "Runners now",
+        "es": "Runners ahora",
+        "de": "Runner jetzt",
+        "zh-Hans": "Runner 现状",
+        "zh-Hant": "Runner 現況"
+      },
+      "description": {
+        "en": "Whether the runner container is up, its version and how long it has run; the jobs running on this machine (project, branch, time); the jobs waiting for a runner and the oldest wait; and what GitLab and GitHub say of their runners.",
+        "es": "Si el contenedor del runner está en marcha, su versión y desde cuándo; los trabajos que corren en este equipo (proyecto, rama, tiempo); los que esperan runner y la espera más larga; y lo que GitLab y GitHub dicen de sus runners.",
+        "de": "Ob der Runner-Container läuft, seine Version und wie lange schon; die Jobs auf diesem Rechner (Projekt, Branch, Zeit); die auf einen Runner wartenden Jobs und die längste Wartezeit; und was GitLab und GitHub über ihre Runner sagen.",
+        "zh-Hans": "Runner 容器是否在运行、版本及已运行时长；本机上运行中的作业（项目、分支、时长）；等待 Runner 的作业及最长等待；以及 GitLab 和 GitHub 上各 Runner 的状态。",
+        "zh-Hant": "Runner 容器是否在執行、版本及已執行時長；本機上執行中的作業（專案、分支、時長）；等待 Runner 的作業及最長等待；以及 GitLab 和 GitHub 上各 Runner 的狀態。"
+      },
+      "icon": "server",
+      "category": "dev",
+      "tags": [
+        "ci",
+        "gitlab-runner",
+        "github-actions",
+        "docker",
+        "jobs"
+      ],
+      "size": {
+        "min": {
+          "w": 160,
+          "h": 30
+        },
+        "preferred": {
+          "w": 320,
+          "h": 200
+        }
+      },
+      "chrome": "card",
+      "sources": [
+        "runners/runners"
+      ],
+      "options": null,
+      "screenshot": "docs/now.png",
+      "animated": false,
+      "urgent": false
+    },
+    {
+      "type": "runners/cache",
+      "name": {
+        "en": "Runner caches on disk",
+        "es": "Cachés del runner en disco",
+        "de": "Runner-Caches auf der Platte",
+        "zh-Hans": "磁盘上的 Runner 缓存",
+        "zh-Hant": "磁碟上的 Runner 快取"
+      },
+      "description": {
+        "en": "What the runner's volumes take on disk: the total and how many, cache and builds, the share for protected refs; how fast they grow, with the last day as bars; the free space where Docker keeps them and when it runs out at this pace; and when the cleanup last ran.",
+        "es": "Lo que ocupan en disco los volúmenes del runner: el total y cuántos son, caché y builds, la parte de ramas protegidas; lo rápido que crecen, con el último día en barras; el espacio libre donde Docker los guarda y cuándo se acaba a este ritmo; y cuándo corrió la limpieza por última vez.",
+        "de": "Was die Volumes des Runners auf der Platte belegen: Summe und Anzahl, Cache und Builds, der Anteil geschützter Refs; wie schnell sie wachsen, mit dem letzten Tag als Balken; der freie Platz, wo Docker sie ablegt, und wann er bei diesem Tempo voll ist; und wann die Bereinigung zuletzt lief.",
+        "zh-Hans": "Runner 卷占用的磁盘空间：总量和数量、缓存与构建目录、受保护分支的占比；增长速度，并以柱状图显示最近一天；Docker 存放它们的磁盘剩余空间，以及按此速度何时占满；以及上次清理的时间。",
+        "zh-Hant": "Runner 磁碟區占用的磁碟空間：總量和數量、快取與建置目錄、受保護分支的占比；增長速度，並以長條圖顯示最近一天；Docker 存放它們的磁碟剩餘空間，以及依此速度何時占滿；以及上次清理的時間。"
+      },
+      "icon": "hard-drive",
+      "category": "dev",
+      "tags": [
+        "ci",
+        "gitlab-runner",
+        "docker",
+        "cache",
+        "disk"
+      ],
+      "size": {
+        "min": {
+          "w": 160,
+          "h": 30
+        },
+        "preferred": {
+          "w": 320,
+          "h": 240
+        }
+      },
+      "chrome": "card",
+      "sources": [
+        "runners/runners"
+      ],
+      "options": null,
+      "screenshot": "docs/cache.png",
+      "animated": false,
+      "urgent": false
+    },
+    {
+      "type": "runners/compact",
+      "name": {
+        "en": "Runner and caches",
+        "es": "Runner y cachés",
+        "de": "Runner und Caches",
+        "zh-Hans": "Runner 与缓存",
+        "zh-Hant": "Runner 與快取"
+      },
+      "description": {
+        "en": "The runner and its caches in one tile: jobs running (and waiting), the caches on disk with their daily growth, and the free disk with when it runs out.",
+        "es": "El runner y sus cachés en una sola tarjeta: trabajos en marcha (y en cola), las cachés en disco con su crecimiento diario, y el disco libre con cuándo se acaba.",
+        "de": "Der Runner und seine Caches in einer Kachel: laufende (und wartende) Jobs, die Caches auf der Platte mit ihrem täglichen Wachstum, und der freie Platz mit dem Zeitpunkt, an dem er ausgeht.",
+        "zh-Hans": "一张卡片看 Runner 和缓存：运行中（及排队）的作业、磁盘上的缓存及每日增长、剩余磁盘空间及何时占满。",
+        "zh-Hant": "一張卡片看 Runner 和快取：執行中（及排隊）的作業、磁碟上的快取及每日增長、剩餘磁碟空間及何時占滿。"
+      },
+      "icon": "gauge",
+      "category": "dev",
+      "tags": [
+        "ci",
+        "gitlab-runner",
+        "docker",
+        "cache",
+        "disk"
+      ],
+      "size": {
+        "min": {
+          "w": 160,
+          "h": 30
+        },
+        "preferred": {
+          "w": 480,
+          "h": 140
+        }
+      },
+      "chrome": "card",
+      "sources": [
+        "runners/runners"
+      ],
+      "options": null,
+      "screenshot": "docs/compact.png",
+      "animated": false,
+      "urgent": false
+    }
+  ],
+  "sources": [
+    {
+      "type": "runners/runners",
+      "name": {
+        "en": "CI runners",
+        "es": "Runners de CI",
+        "de": "CI-Runner",
+        "zh-Hans": "CI Runner",
+        "zh-Hant": "CI Runner"
+      },
+      "description": {
+        "en": "The GitLab runner on this machine through Docker or Podman (read-only): its container, the jobs running, its cache volumes' size and growth, the free disk and the cleanup timer; and, if set up, runner status and waiting jobs from GitLab's API, GitHub Actions self-hosted runners and the runner's Prometheus metrics.",
+        "es": "El runner de GitLab de este equipo a través de Docker o Podman (solo lectura): su contenedor, los trabajos en marcha, el tamaño y el crecimiento de sus volúmenes de caché, el disco libre y el temporizador de limpieza; y, si se configuran, el estado de los runners y los trabajos en cola de la API de GitLab, los runners propios de GitHub Actions y las métricas Prometheus del runner.",
+        "de": "Der GitLab-Runner auf diesem Rechner über Docker oder Podman (nur lesend): sein Container, die laufenden Jobs, Größe und Wachstum seiner Cache-Volumes, der freie Platz und der Bereinigungs-Timer; und, wenn eingerichtet, Runner-Status und wartende Jobs aus der GitLab-API, selbst gehostete GitHub-Actions-Runner und die Prometheus-Metriken des Runners.",
+        "zh-Hans": "通过 Docker 或 Podman（只读）读取本机上的 GitLab Runner：其容器、运行中的作业、缓存卷的大小和增长、可用磁盘和清理定时器；如已设置，还包括 GitLab API 中的 Runner 状态和排队作业、GitHub Actions 自托管 Runner，以及 Runner 的 Prometheus 指标。",
+        "zh-Hant": "透過 Docker 或 Podman（唯讀）讀取本機上的 GitLab Runner：其容器、執行中的作業、快取磁碟區的大小和增長、可用磁碟和清理計時器；如已設定，還包括 GitLab API 中的 Runner 狀態和排隊作業、GitHub Actions 自架 Runner，以及 Runner 的 Prometheus 指標。"
+      },
+      "polled": true,
+      "intervalMs": 30000,
+      "options": {
+        "default": {
+          "engine": "auto",
+          "sizesEveryMs": 1800000,
+          "cleanupTimer": "",
+          "timerScope": "user",
+          "runnerContainer": "",
+          "dockerHost": "",
+          "configToml": "",
+          "gitlabToken": "",
+          "gitlabUrl": "",
+          "gitlabProjects": [],
+          "gitlabGroups": [],
+          "githubToken": "",
+          "githubRepos": [],
+          "githubOrgs": [],
+          "githubApi": "",
+          "metricsUrl": "",
+          "alerts": true,
+          "diskFreeMinPct": 15,
+          "growthMaxGb": 20,
+          "pendingMaxMs": 900000,
+          "timerMaxMs": 93600000
+        },
+        "x-ui": {},
+        "type": "object",
+        "properties": {
+          "engine": {
+            "title": "Runner on this machine",
+            "description": "Read with Docker's or Podman's command line, read-only (ps, volume ls, system df, info). Automatic: docker, or podman if there's no docker. Rootless Docker is found by itself.",
+            "default": "auto",
+            "x-ui": {
+              "label": {
+                "en": "Runner on this machine",
+                "es": "Runner en este equipo",
+                "de": "Runner auf diesem Rechner",
+                "zh-Hans": "本机上的 Runner",
+                "zh-Hant": "本機上的 Runner"
+              },
+              "help": {
+                "en": "Read with Docker's or Podman's command line, read-only (ps, volume ls, system df, info). Automatic: docker, or podman if there's no docker. Rootless Docker is found by itself.",
+                "es": "Se lee con la línea de comandos de Docker o Podman, solo lectura (ps, volume ls, system df, info). Automático: docker, o podman si no hay docker. Docker rootless se encuentra solo.",
+                "de": "Gelesen über die Kommandozeile von Docker oder Podman, nur lesend (ps, volume ls, system df, info). Automatisch: docker, oder podman, wenn es kein docker gibt. Rootless-Docker wird von selbst gefunden.",
+                "zh-Hans": "通过 Docker 或 Podman 命令行只读读取（ps、volume ls、system df、info）。自动：使用 docker，没有 docker 时用 podman。会自动找到 rootless Docker。",
+                "zh-Hant": "透過 Docker 或 Podman 命令列唯讀讀取（ps、volume ls、system df、info）。自動：使用 docker，沒有 docker 時用 podman。會自動找到 rootless Docker。"
+              },
+              "labels": {
+                "auto": {
+                  "en": "Automatic",
+                  "es": "Automático",
+                  "de": "Automatisch",
+                  "zh-Hans": "自动",
+                  "zh-Hant": "自動"
+                },
+                "docker": {
+                  "en": "Docker",
+                  "es": "Docker",
+                  "de": "Docker",
+                  "zh-Hans": "Docker",
+                  "zh-Hant": "Docker"
+                },
+                "podman": {
+                  "en": "Podman",
+                  "es": "Podman",
+                  "de": "Podman",
+                  "zh-Hans": "Podman",
+                  "zh-Hant": "Podman"
+                },
+                "off": {
+                  "en": "None (only the APIs)",
+                  "es": "Ninguno (solo las API)",
+                  "de": "Keiner (nur die APIs)",
+                  "zh-Hans": "无（仅 API）",
+                  "zh-Hant": "無（僅 API）"
+                }
+              }
+            },
+            "type": "string",
+            "enum": [
+              "auto",
+              "docker",
+              "podman",
+              "off"
+            ]
+          },
+          "sizesEveryMs": {
+            "title": "Measure the volumes every",
+            "description": "`system df -v` walks every file of every volume: seconds to minutes of disk work. It runs in the background, never while Kiosko starts.",
+            "default": 1800000,
+            "x-ui": {
+              "label": {
+                "en": "Measure the volumes every",
+                "es": "Medir los volúmenes cada",
+                "de": "Volumes messen alle",
+                "zh-Hans": "测量卷的间隔",
+                "zh-Hant": "測量磁碟區的間隔"
+              },
+              "help": {
+                "en": "`system df -v` walks every file of every volume: seconds to minutes of disk work. It runs in the background, never while Kiosko starts.",
+                "es": "`system df -v` recorre cada fichero de cada volumen: de segundos a minutos de trabajo de disco. En segundo plano, nunca mientras arranca Kiosko.",
+                "de": "`system df -v` durchläuft jede Datei jedes Volumes: Sekunden bis Minuten Plattenarbeit. Im Hintergrund, nie während Kiosko startet.",
+                "zh-Hans": "`system df -v` 会遍历每个卷的每个文件：需要几秒到几分钟的磁盘操作。在后台运行，Kiosko 启动时不会运行。",
+                "zh-Hant": "`system df -v` 會走訪每個磁碟區的每個檔案：需要幾秒到幾分鐘的磁碟作業。在背景執行，Kiosko 啟動時不會執行。"
+              },
+              "unit": "ms"
+            },
+            "type": "integer",
+            "minimum": 600000,
+            "maximum": 21600000
+          },
+          "cleanupTimer": {
+            "title": "Cleanup timer (systemd)",
+            "description": "Linux: the timer that prunes the caches, to show when it last ran and warn when it stops running. Empty: not shown.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "Cleanup timer (systemd)",
+                "es": "Temporizador de limpieza (systemd)",
+                "de": "Bereinigungs-Timer (systemd)",
+                "zh-Hans": "清理定时器（systemd）",
+                "zh-Hant": "清理計時器（systemd）"
+              },
+              "help": {
+                "en": "Linux: the timer that prunes the caches, to show when it last ran and warn when it stops running. Empty: not shown.",
+                "es": "Linux: el temporizador que poda las cachés, para mostrar cuándo corrió por última vez y avisar si deja de hacerlo. Vacío: no se muestra.",
+                "de": "Linux: der Timer, der die Caches aufräumt, um zu zeigen, wann er zuletzt lief, und zu warnen, wenn er nicht mehr läuft. Leer: nicht gezeigt.",
+                "zh-Hans": "Linux：清理缓存的定时器，用于显示上次运行时间，并在其停止运行时提醒。留空：不显示。",
+                "zh-Hant": "Linux：清理快取的計時器，用於顯示上次執行時間，並在其停止執行時提醒。留空：不顯示。"
+              },
+              "placeholder": "cleanup-runner-cache.timer"
+            },
+            "type": "string"
+          },
+          "timerScope": {
+            "title": "Timer of",
+            "default": "user",
+            "x-ui": {
+              "label": {
+                "en": "Timer of",
+                "es": "Temporizador de",
+                "de": "Timer von",
+                "zh-Hans": "定时器属于",
+                "zh-Hant": "計時器屬於"
+              },
+              "advanced": true,
+              "labels": {
+                "user": {
+                  "en": "Your user (systemctl --user)",
+                  "es": "Tu usuario (systemctl --user)",
+                  "de": "Deinem Benutzer (systemctl --user)",
+                  "zh-Hans": "你的用户（systemctl --user）",
+                  "zh-Hant": "你的使用者（systemctl --user）"
+                },
+                "system": {
+                  "en": "The system",
+                  "es": "El sistema",
+                  "de": "Dem System",
+                  "zh-Hans": "系统",
+                  "zh-Hant": "系統"
+                }
+              }
+            },
+            "type": "string",
+            "enum": [
+              "user",
+              "system"
+            ]
+          },
+          "runnerContainer": {
+            "title": "Runner container",
+            "description": "Empty: every container of the gitlab/gitlab-runner image.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "Runner container",
+                "es": "Contenedor del runner",
+                "de": "Runner-Container",
+                "zh-Hans": "Runner 容器",
+                "zh-Hant": "Runner 容器"
+              },
+              "help": {
+                "en": "Empty: every container of the gitlab/gitlab-runner image.",
+                "es": "Vacío: todos los contenedores de la imagen gitlab/gitlab-runner.",
+                "de": "Leer: alle Container des Images gitlab/gitlab-runner.",
+                "zh-Hans": "留空：所有 gitlab/gitlab-runner 镜像的容器。",
+                "zh-Hant": "留空：所有 gitlab/gitlab-runner 映像的容器。"
+              },
+              "advanced": true,
+              "placeholder": "gitlab-runner"
+            },
+            "type": "string"
+          },
+          "dockerHost": {
+            "title": "Docker host",
+            "description": "Empty: DOCKER_HOST, the system socket, or the rootless one.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "Docker host",
+                "es": "Host de Docker",
+                "de": "Docker-Host",
+                "zh-Hans": "Docker 主机",
+                "zh-Hant": "Docker 主機"
+              },
+              "help": {
+                "en": "Empty: DOCKER_HOST, the system socket, or the rootless one.",
+                "es": "Vacío: DOCKER_HOST, el socket del sistema o el rootless.",
+                "de": "Leer: DOCKER_HOST, der System-Socket oder der rootless.",
+                "zh-Hans": "留空：DOCKER_HOST、系统套接字或 rootless 套接字。",
+                "zh-Hant": "留空：DOCKER_HOST、系統通訊端或 rootless 通訊端。"
+              },
+              "advanced": true,
+              "placeholder": "unix:///run/user/1000/docker.sock"
+            },
+            "x-risk": "network",
+            "type": "string"
+          },
+          "configToml": {
+            "title": "The runner's config.toml",
+            "description": "Optional: concurrent and listen_address (for the metrics), and each runner's name and executor. Its tokens are never read into the plugin, shown or logged.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "The runner's config.toml",
+                "es": "El config.toml del runner",
+                "de": "config.toml des Runners",
+                "zh-Hans": "Runner 的 config.toml",
+                "zh-Hant": "Runner 的 config.toml"
+              },
+              "help": {
+                "en": "Optional: concurrent and listen_address (for the metrics), and each runner's name and executor. Its tokens are never read into the plugin, shown or logged.",
+                "es": "Opcional: concurrent y listen_address (para las métricas), y el nombre y executor de cada runner. Sus tokens nunca se guardan en el plugin, ni se muestran ni se registran.",
+                "de": "Optional: concurrent und listen_address (für die Metriken) sowie Name und Executor jedes Runners. Seine Tokens werden nie übernommen, gezeigt oder protokolliert.",
+                "zh-Hans": "可选：concurrent 和 listen_address（用于指标），以及每个 Runner 的名称和执行器。其中的令牌绝不会被插件保留、显示或记录。",
+                "zh-Hant": "選用：concurrent 和 listen_address（用於指標），以及每個 Runner 的名稱和執行器。其中的權杖絕不會被外掛保留、顯示或記錄。"
+              },
+              "advanced": true,
+              "placeholder": "/etc/gitlab-runner/config.toml",
+              "format": "path"
+            },
+            "x-risk": "path",
+            "type": "string"
+          },
+          "gitlabToken": {
+            "title": "GitLab access token",
+            "description": "Optional, with read_api: runner status (online, last contact, version) and the jobs waiting and running in the projects below. No admin rights needed. Secret: leave it empty (or a placeholder such as \"<token>\"). Kiosko keeps the value it already has, or asks for it in the editor.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "GitLab access token",
+                "es": "Token de acceso de GitLab",
+                "de": "GitLab-Zugriffstoken",
+                "zh-Hans": "GitLab 访问令牌",
+                "zh-Hant": "GitLab 存取權杖"
+              },
+              "help": {
+                "en": "Optional, with read_api: runner status (online, last contact, version) and the jobs waiting and running in the projects below. No admin rights needed.",
+                "es": "Opcional, con read_api: el estado de los runners (en línea, último contacto, versión) y los trabajos en cola y en marcha en los proyectos de abajo. No hace falta ser administrador.",
+                "de": "Optional, mit read_api: Runner-Status (online, letzter Kontakt, Version) und die wartenden und laufenden Jobs in den Projekten unten. Keine Admin-Rechte nötig.",
+                "zh-Hans": "可选，需 read_api：Runner 状态（在线、上次联系、版本）以及下方项目中排队和运行中的作业。不需要管理员权限。",
+                "zh-Hant": "選用，需 read_api：Runner 狀態（線上、上次聯絡、版本）以及下方專案中排隊和執行中的作業。不需要管理員權限。"
+              },
+              "secret": true
+            },
+            "x-secret": true,
+            "type": "string"
+          },
+          "gitlabUrl": {
+            "title": "GitLab address",
+            "description": "Empty: gitlab.com.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "GitLab address",
+                "es": "Dirección de GitLab",
+                "de": "GitLab-Adresse",
+                "zh-Hans": "GitLab 地址",
+                "zh-Hant": "GitLab 位址"
+              },
+              "help": {
+                "en": "Empty: gitlab.com.",
+                "es": "Vacío: gitlab.com.",
+                "de": "Leer: gitlab.com.",
+                "zh-Hans": "留空：gitlab.com。",
+                "zh-Hant": "留空：gitlab.com。"
+              },
+              "placeholder": "https://gitlab.com",
+              "format": "url"
+            },
+            "x-risk": "network",
+            "type": "string"
+          },
+          "gitlabProjects": {
+            "title": "GitLab projects",
+            "description": "Their pending and running jobs. Path or id, one per line.",
+            "default": [],
+            "x-ui": {
+              "label": {
+                "en": "GitLab projects",
+                "es": "Proyectos de GitLab",
+                "de": "GitLab-Projekte",
+                "zh-Hans": "GitLab 项目",
+                "zh-Hant": "GitLab 專案"
+              },
+              "help": {
+                "en": "Their pending and running jobs. Path or id, one per line.",
+                "es": "Sus trabajos en cola y en marcha. Ruta o id, uno por línea.",
+                "de": "Ihre wartenden und laufenden Jobs. Pfad oder ID, eines pro Zeile.",
+                "zh-Hans": "其排队和运行中的作业。路径或 ID，每行一个。",
+                "zh-Hant": "其排隊和執行中的作業。路徑或 ID，每行一個。"
+              }
+            },
+            "type": "array",
+            "items": {
+              "default": "",
+              "x-ui": {
+                "placeholder": "group/project"
+              },
+              "type": "string"
+            },
+            "maxItems": 20
+          },
+          "gitlabGroups": {
+            "title": "GitLab groups",
+            "description": "Their 20 most recently active projects.",
+            "default": [],
+            "x-ui": {
+              "label": {
+                "en": "GitLab groups",
+                "es": "Grupos de GitLab",
+                "de": "GitLab-Gruppen",
+                "zh-Hans": "GitLab 群组",
+                "zh-Hant": "GitLab 群組"
+              },
+              "help": {
+                "en": "Their 20 most recently active projects.",
+                "es": "Sus 20 proyectos con actividad más reciente.",
+                "de": "Ihre 20 zuletzt aktiven Projekte.",
+                "zh-Hans": "其最近活跃的 20 个项目。",
+                "zh-Hant": "其最近活躍的 20 個專案。"
+              },
+              "advanced": true
+            },
+            "type": "array",
+            "items": {
+              "default": "",
+              "x-ui": {
+                "placeholder": "group"
+              },
+              "type": "string"
+            },
+            "maxItems": 5
+          },
+          "githubToken": {
+            "title": "GitHub token",
+            "description": "Optional: self-hosted runners (Administration: read on a repository, Self-hosted runners: read on an organisation) and queued runs (Actions: read). Secret: leave it empty (or a placeholder such as \"<token>\"). Kiosko keeps the value it already has, or asks for it in the editor.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "GitHub token",
+                "es": "Token de GitHub",
+                "de": "GitHub-Token",
+                "zh-Hans": "GitHub 令牌",
+                "zh-Hant": "GitHub 權杖"
+              },
+              "help": {
+                "en": "Optional: self-hosted runners (Administration: read on a repository, Self-hosted runners: read on an organisation) and queued runs (Actions: read).",
+                "es": "Opcional: runners propios (Administration: read en un repositorio, Self-hosted runners: read en una organización) y ejecuciones en cola (Actions: read).",
+                "de": "Optional: selbst gehostete Runner (Administration: read im Repository, Self-hosted runners: read in einer Organisation) und wartende Läufe (Actions: read).",
+                "zh-Hans": "可选：自托管 Runner（仓库需 Administration: read，组织需 Self-hosted runners: read）及排队的运行（Actions: read）。",
+                "zh-Hant": "選用：自架 Runner（儲存庫需 Administration: read，組織需 Self-hosted runners: read）及排隊的執行（Actions: read）。"
+              },
+              "secret": true
+            },
+            "x-secret": true,
+            "type": "string"
+          },
+          "githubRepos": {
+            "title": "GitHub repositories",
+            "default": [],
+            "x-ui": {
+              "label": {
+                "en": "GitHub repositories",
+                "es": "Repositorios de GitHub",
+                "de": "GitHub-Repositorys",
+                "zh-Hans": "GitHub 仓库",
+                "zh-Hant": "GitHub 儲存庫"
+              }
+            },
+            "type": "array",
+            "items": {
+              "default": "",
+              "x-ui": {
+                "placeholder": "owner/repo"
+              },
+              "type": "string"
+            },
+            "maxItems": 10
+          },
+          "githubOrgs": {
+            "title": "GitHub organisations",
+            "default": [],
+            "x-ui": {
+              "label": {
+                "en": "GitHub organisations",
+                "es": "Organizaciones de GitHub",
+                "de": "GitHub-Organisationen",
+                "zh-Hans": "GitHub 组织",
+                "zh-Hant": "GitHub 組織"
+              },
+              "advanced": true
+            },
+            "type": "array",
+            "items": {
+              "default": "",
+              "x-ui": {
+                "placeholder": "my-org"
+              },
+              "type": "string"
+            },
+            "maxItems": 5
+          },
+          "githubApi": {
+            "title": "GitHub API address",
+            "description": "Enterprise Server: https://github.example.com/api/v3.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "GitHub API address",
+                "es": "Dirección de la API de GitHub",
+                "de": "GitHub-API-Adresse",
+                "zh-Hans": "GitHub API 地址",
+                "zh-Hant": "GitHub API 位址"
+              },
+              "help": {
+                "en": "Enterprise Server: https://github.example.com/api/v3.",
+                "es": "Enterprise Server: https://github.example.com/api/v3.",
+                "de": "Enterprise Server: https://github.example.com/api/v3.",
+                "zh-Hans": "Enterprise Server：https://github.example.com/api/v3。",
+                "zh-Hant": "Enterprise Server：https://github.example.com/api/v3。"
+              },
+              "advanced": true,
+              "placeholder": "https://api.github.com",
+              "format": "url"
+            },
+            "x-risk": "network",
+            "type": "string"
+          },
+          "metricsUrl": {
+            "title": "Runner metrics address",
+            "description": "Optional, when listen_address is set in its config.toml. Empty: from the config.toml above, if set.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "Runner metrics address",
+                "es": "Dirección de las métricas del runner",
+                "de": "Adresse der Runner-Metriken",
+                "zh-Hans": "Runner 指标地址",
+                "zh-Hant": "Runner 指標位址"
+              },
+              "help": {
+                "en": "Optional, when listen_address is set in its config.toml. Empty: from the config.toml above, if set.",
+                "es": "Opcional, si tiene listen_address en su config.toml. Vacío: la del config.toml de arriba, si está puesto.",
+                "de": "Optional, wenn listen_address in seiner config.toml steht. Leer: aus der config.toml oben, falls gesetzt.",
+                "zh-Hans": "可选，需在其 config.toml 中设置 listen_address。留空：使用上方 config.toml 中的设置（如有）。",
+                "zh-Hant": "選用，需在其 config.toml 中設定 listen_address。留空：使用上方 config.toml 中的設定（如有）。"
+              },
+              "placeholder": "http://127.0.0.1:9252/metrics",
+              "format": "url"
+            },
+            "x-risk": "network",
+            "type": "string"
+          },
+          "alerts": {
+            "title": "Full-screen alerts",
+            "description": "Runner down or restarting, the disk below the share below, caches growing too fast, a job waiting too long, the cleanup not run.",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Full-screen alerts",
+                "es": "Avisos a pantalla completa",
+                "de": "Vollbild-Warnungen",
+                "zh-Hans": "全屏提醒",
+                "zh-Hant": "全螢幕提醒"
+              },
+              "help": {
+                "en": "Runner down or restarting, the disk below the share below, caches growing too fast, a job waiting too long, the cleanup not run.",
+                "es": "Runner parado o reiniciándose, el disco por debajo del porcentaje de abajo, cachés que crecen demasiado, un trabajo que espera demasiado, la limpieza sin correr.",
+                "de": "Runner gestoppt oder im Neustart, die Platte unter dem Anteil unten, zu schnell wachsende Caches, ein Job, der zu lange wartet, die Bereinigung nicht gelaufen.",
+                "zh-Hans": "Runner 停止或重启、磁盘低于下方比例、缓存增长过快、作业等待过久、清理未运行。",
+                "zh-Hant": "Runner 停止或重新啟動、磁碟低於下方比例、快取增長過快、作業等待過久、清理未執行。"
+              }
+            },
+            "type": "boolean"
+          },
+          "diskFreeMinPct": {
+            "title": "Critical under this much free disk",
+            "default": 15,
+            "x-ui": {
+              "label": {
+                "en": "Critical under this much free disk",
+                "es": "Crítico por debajo de este disco libre",
+                "de": "Kritisch unter so viel freiem Platz",
+                "zh-Hans": "可用磁盘低于此值为严重",
+                "zh-Hant": "可用磁碟低於此值為嚴重"
+              },
+              "unit": "%"
+            },
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "growthMaxGb": {
+            "title": "Warn when caches grow more than, a day",
+            "default": 20,
+            "x-ui": {
+              "label": {
+                "en": "Warn when caches grow more than, a day",
+                "es": "Avisar si las cachés crecen más de, al día",
+                "de": "Warnen, wenn Caches pro Tag mehr wachsen als",
+                "zh-Hans": "缓存每天增长超过此值时提醒",
+                "zh-Hant": "快取每天增長超過此值時提醒"
+              },
+              "unit": "GB"
+            },
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2000
+          },
+          "pendingMaxMs": {
+            "title": "Warn when a job waits longer than",
+            "default": 900000,
+            "x-ui": {
+              "label": {
+                "en": "Warn when a job waits longer than",
+                "es": "Avisar si un trabajo espera más de",
+                "de": "Warnen, wenn ein Job länger wartet als",
+                "zh-Hans": "作业等待超过此时长时提醒",
+                "zh-Hant": "作業等待超過此時長時提醒"
+              },
+              "unit": "ms"
+            },
+            "type": "integer",
+            "minimum": 60000,
+            "maximum": 86400000
+          },
+          "timerMaxMs": {
+            "title": "Warn when the cleanup has not run for",
+            "default": 93600000,
+            "x-ui": {
+              "label": {
+                "en": "Warn when the cleanup has not run for",
+                "es": "Avisar si la limpieza no ha corrido en",
+                "de": "Warnen, wenn die Bereinigung nicht gelaufen ist seit",
+                "zh-Hans": "清理超过此时长未运行时提醒",
+                "zh-Hant": "清理超過此時長未執行時提醒"
+              },
+              "advanced": true,
+              "unit": "ms"
+            },
+            "type": "integer",
+            "minimum": 3600000,
+            "maximum": 1209600000
+          }
+        }
+      }
+    }
+  ],
+  "interludes": [],
+  "templates": [
+    {
+      "id": "runners",
+      "name": {
+        "en": "CI runners",
+        "es": "Runners de CI",
+        "de": "CI-Runner",
+        "zh-Hans": "CI Runner",
+        "zh-Hant": "CI Runner"
+      },
+      "icon": "server",
+      "widgets": [
+        "runners/now",
+        "runners/cache"
+      ],
+      "layouts": [
+        "wide",
+        "tall"
+      ]
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/kiosko-lcd/kiosko-plugin-runners/issues",
+    "docs": "https://github.com/kiosko-lcd/kiosko-plugin-runners#readme"
+  },
+  "resources": {
+    "memoryMb": 15,
+    "cpu": "low"
+  }
+}

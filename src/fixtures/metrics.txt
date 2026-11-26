@@ -1,0 +1,29 @@
+# HELP gitlab_runner_api_request_statuses_total The total number of api requests, partitioned by runner, system_id, endpoint and status.
+# TYPE gitlab_runner_api_request_statuses_total counter
+gitlab_runner_api_request_statuses_total{endpoint="request_job",runner="AbCdEf",status="204",system_id="r_0123456789ab"} 52140
+# HELP gitlab_runner_concurrent The current value of concurrent setting
+# TYPE gitlab_runner_concurrent gauge
+gitlab_runner_concurrent 4
+# HELP gitlab_runner_errors_total The number of caught errors.
+# TYPE gitlab_runner_errors_total counter
+gitlab_runner_errors_total{level="error"} 3
+gitlab_runner_errors_total{level="warning"} 41
+# HELP gitlab_runner_failed_jobs_total Total number of failed jobs
+# TYPE gitlab_runner_failed_jobs_total counter
+gitlab_runner_failed_jobs_total{failure_reason="script_failure",runner="AbCdEf",system_id="r_0123456789ab"} 58
+gitlab_runner_failed_jobs_total{failure_reason="job_execution_timeout",runner="AbCdEf",system_id="r_0123456789ab"} 3
+# HELP gitlab_runner_jobs The current number of running builds.
+# TYPE gitlab_runner_jobs gauge
+gitlab_runner_jobs{executor_stage="docker_run",runner="AbCdEf",stage="step_script",state="running",system_id="r_0123456789ab"} 2
+# HELP gitlab_runner_jobs_total Total number of handled jobs
+# TYPE gitlab_runner_jobs_total counter
+gitlab_runner_jobs_total{runner="AbCdEf",system_id="r_0123456789ab"} 1840
+# HELP gitlab_runner_limit The current value of limit setting
+# TYPE gitlab_runner_limit gauge
+gitlab_runner_limit{runner="AbCdEf",system_id="r_0123456789ab"} 2
+# HELP gitlab_runner_version_info A metric with a constant '1' value labeled by different build stats fields.
+# TYPE gitlab_runner_version_info gauge
+gitlab_runner_version_info{architecture="amd64",branch="19-5-stable",built_at="2026-11-01 10:00:00 +0000",go_version="go1.24.4",name="gitlab-runner",os="linux",revision="a1b2c3d4",version="19.5.1"} 1
+# HELP process_start_time_seconds Start time of the process since unix epoch in seconds.
+# TYPE process_start_time_seconds gauge
+process_start_time_seconds 1.79524752912e+09

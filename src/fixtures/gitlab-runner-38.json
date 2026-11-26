@@ -1,0 +1,16 @@
+{
+  "active": true,
+  "paused": false,
+  "description": "old laptop",
+  "id": 38,
+  "is_shared": false,
+  "runner_type": "group_type",
+  "contacted_at": "2026-11-23T08:00:00.000Z",
+  "online": false,
+  "status": "offline",
+  "tag_list": [],
+  "version": "18.2.0",
+  "revision": "bbbb",
+  "platform": "linux",
+  "architecture": "arm64"
+}

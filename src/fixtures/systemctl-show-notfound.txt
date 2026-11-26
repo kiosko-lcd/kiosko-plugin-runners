@@ -1,0 +1,7 @@
+Id=no-such.timer
+LoadState=not-found
+ActiveState=inactive
+NextElapseUSecRealtime=
+LastTriggerUSec=
+Unit=no-such.service
+Result=success

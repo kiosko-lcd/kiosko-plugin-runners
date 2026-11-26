@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "system_id": "s_89e5e9956577",
+    "version": "19.4.0",
+    "revision": "aaaa",
+    "platform": "linux",
+    "architecture": "amd64",
+    "created_at": "2026-09-01T10:00:00.000Z",
+    "contacted_at": "2026-10-01T10:00:00.000Z",
+    "ip_address": "127.0.0.1",
+    "status": "offline",
+    "job_execution_status": "idle"
+  },
+  {
+    "id": 2,
+    "system_id": "r_0123456789ab",
+    "version": "19.5.1",
+    "revision": "a1b2c3d4",
+    "platform": "linux",
+    "architecture": "amd64",
+    "created_at": "2026-11-01T10:00:00.000Z",
+    "contacted_at": "2026-11-26T20:09:40.000Z",
+    "ip_address": "127.0.0.1",
+    "status": "online",
+    "job_execution_status": "active"
+  }
+]

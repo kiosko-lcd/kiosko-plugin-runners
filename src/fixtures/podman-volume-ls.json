@@ -1,0 +1,43 @@
+[
+  {
+    "Name": "runner-ddd-cache-3c3f060a0374fc8bc39395164f415a70",
+    "Driver": "local",
+    "Mountpoint": "/home/u/.local/share/containers/storage/volumes/x/_data",
+    "CreatedAt": "2026-11-20T10:00:00+01:00",
+    "Labels": {
+      "com.gitlab.gitlab-runner.destination": "/cache",
+      "com.gitlab.gitlab-runner.job.id": "4100",
+      "com.gitlab.gitlab-runner.job.url": "https://gitlab.example.com/acme/web/-/jobs/4100",
+      "com.gitlab.gitlab-runner.managed": "true",
+      "com.gitlab.gitlab-runner.protected": "false",
+      "com.gitlab.gitlab-runner.type": "cache"
+    },
+    "Scope": "local",
+    "Options": {},
+    "MountCount": 0,
+    "NeedsCopyUp": true,
+    "LockNumber": 3
+  },
+  {
+    "Name": "runner-ddd-cache-c33bcaa1fd2c77edfc3893b41966cea8-protected",
+    "Driver": "local",
+    "Mountpoint": "/y",
+    "CreatedAt": "2026-11-20T10:00:00+01:00",
+    "Labels": {},
+    "Scope": "local",
+    "Options": {},
+    "MountCount": 1,
+    "LockNumber": 4
+  },
+  {
+    "Name": "pgdata",
+    "Driver": "local",
+    "Mountpoint": "/z",
+    "CreatedAt": "2026-11-20T10:00:00+01:00",
+    "Labels": {},
+    "Scope": "local",
+    "Options": {},
+    "MountCount": 0,
+    "LockNumber": 5
+  }
+]

@@ -1,0 +1,7 @@
+Id=cleanup-runner-cache.service
+LoadState=loaded
+ActiveState=inactive
+Result=success
+ExecMainStatus=0
+ExecMainExitTimestamp=@1795661792
+ExecMainStartTimestamp=@1795661747

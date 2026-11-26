@@ -1,0 +1,55 @@
+{
+  "total_count": 2,
+  "workflow_runs": [
+    {
+      "id": 30433642,
+      "name": "CI",
+      "node_id": "WFR_x",
+      "head_branch": "main",
+      "head_sha": "6c868aa0",
+      "path": ".github/workflows/ci.yml",
+      "run_number": 120,
+      "event": "push",
+      "display_title": "Fix the thing",
+      "status": "queued",
+      "conclusion": null,
+      "workflow_id": 161335,
+      "url": "https://api.github.com/repos/octo-org/app/actions/runs/30433642",
+      "html_url": "https://github.com/octo-org/app/actions/runs/30433642",
+      "created_at": "2026-11-26T19:40:00Z",
+      "updated_at": "2026-11-26T19:40:00Z",
+      "run_attempt": 1,
+      "run_started_at": "2026-11-26T19:40:00Z",
+      "repository": {
+        "id": 1296269,
+        "name": "app",
+        "full_name": "octo-org/app"
+      }
+    },
+    {
+      "id": 30433650,
+      "name": "CI",
+      "node_id": "WFR_x",
+      "head_branch": "main",
+      "head_sha": "6c868aa0",
+      "path": ".github/workflows/ci.yml",
+      "run_number": 120,
+      "event": "push",
+      "display_title": "Fix the thing",
+      "status": "queued",
+      "conclusion": null,
+      "workflow_id": 161335,
+      "url": "https://api.github.com/repos/octo-org/app/actions/runs/30433650",
+      "html_url": "https://github.com/octo-org/app/actions/runs/30433650",
+      "created_at": "2026-11-26T20:05:00Z",
+      "updated_at": "2026-11-26T20:05:00Z",
+      "run_attempt": 1,
+      "run_started_at": "2026-11-26T20:05:00Z",
+      "repository": {
+        "id": 1296269,
+        "name": "app",
+        "full_name": "octo-org/app"
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+Id=cleanup-runner-cache.timer
+LoadState=loaded
+ActiveState=active
+NextElapseUSecRealtime=@1795747720
+LastTriggerUSec=@1795661747
+Unit=cleanup-runner-cache.service
+Result=success

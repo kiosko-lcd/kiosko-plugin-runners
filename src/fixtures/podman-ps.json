@@ -1,0 +1,71 @@
+[
+  {
+    "AutoRemove": false,
+    "Command": [
+      "run",
+      "--working-directory=/home/gitlab-runner"
+    ],
+    "Created": 1795247529,
+    "CreatedAt": "10 days ago",
+    "Exited": false,
+    "ExitCode": 0,
+    "Id": "7f3e9a1c2b4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f",
+    "Image": "docker.io/gitlab/gitlab-runner:alpine-v18.6.2",
+    "ImageID": "aa",
+    "IsInfra": false,
+    "Labels": null,
+    "Mounts": [
+      "/etc/gitlab-runner"
+    ],
+    "Names": [
+      "gitlab-runner"
+    ],
+    "Namespaces": {},
+    "Networks": [
+      "podman"
+    ],
+    "Pid": 1234,
+    "Pod": "",
+    "PodName": "",
+    "Ports": null,
+    "Restarts": 0,
+    "Size": null,
+    "StartedAt": 1795247530,
+    "State": "running",
+    "Status": ""
+  },
+  {
+    "AutoRemove": false,
+    "Command": [
+      "sh"
+    ],
+    "Created": 1795709000,
+    "CreatedAt": "2 minutes ago",
+    "Exited": false,
+    "ExitCode": 0,
+    "Id": "1111111111112222222222",
+    "Image": "docker.io/library/python:3.13",
+    "Labels": {
+      "com.gitlab.gitlab-runner.job.id": "77",
+      "com.gitlab.gitlab-runner.job.ref": "refs/tags/v2.1.0",
+      "com.gitlab.gitlab-runner.job.sha": "6c868aa0ecab598a5c9c8dfc15aef2099a7a5d20",
+      "com.gitlab.gitlab-runner.job.timeout": "1h0m0s",
+      "com.gitlab.gitlab-runner.job.url": "https://gitlab.com/group/sub/data-pipeline/-/jobs/77",
+      "com.gitlab.gitlab-runner.managed": "true",
+      "com.gitlab.gitlab-runner.pipeline.id": "900",
+      "com.gitlab.gitlab-runner.project.id": "42",
+      "com.gitlab.gitlab-runner.runner.id": "AbCdEf",
+      "com.gitlab.gitlab-runner.type": "build"
+    },
+    "Names": [
+      "runner-x-project-9-concurrent-0-77-build"
+    ],
+    "Networks": [
+      "podman"
+    ],
+    "Restarts": 0,
+    "StartedAt": 1795709001,
+    "State": "running",
+    "Status": ""
+  }
+]

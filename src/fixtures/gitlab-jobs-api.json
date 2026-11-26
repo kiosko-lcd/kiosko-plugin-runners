@@ -1,0 +1,46 @@
+[
+  {
+    "commit": {
+      "id": "6c868aa0ecab598a5c9c8dfc15aef2099a7a5d20",
+      "short_id": "6c868aa0",
+      "title": "Fix the thing"
+    },
+    "coverage": null,
+    "archived": false,
+    "allow_failure": false,
+    "created_at": "2026-11-26T20:08:00.000Z",
+    "started_at": null,
+    "finished_at": null,
+    "erased_at": null,
+    "duration": null,
+    "queued_duration": 12.5,
+    "artifacts_expire_at": null,
+    "tag_list": [
+      "docker"
+    ],
+    "id": 4216,
+    "name": "e2e",
+    "pipeline": {
+      "id": 900,
+      "project_id": 42,
+      "ref": "main",
+      "sha": "6c868aa0",
+      "status": "running"
+    },
+    "ref": "main",
+    "artifacts": [],
+    "runner": null,
+    "stage": "test",
+    "status": "pending",
+    "failure_reason": null,
+    "tag": false,
+    "web_url": "https://gitlab.example.com/acme/tools/api/-/jobs/4216",
+    "project": {
+      "ci_job_token_scope_enabled": false
+    },
+    "user": {
+      "id": 1,
+      "username": "someone"
+    }
+  }
+]

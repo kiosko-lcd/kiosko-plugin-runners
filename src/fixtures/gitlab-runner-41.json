@@ -1,0 +1,33 @@
+{
+  "active": true,
+  "paused": false,
+  "architecture": null,
+  "description": "desktop docker",
+  "id": 41,
+  "ip_address": null,
+  "is_shared": false,
+  "runner_type": "project_type",
+  "contacted_at": "2026-11-26T20:09:40.000Z",
+  "maintenance_note": null,
+  "name": null,
+  "online": true,
+  "status": "online",
+  "platform": null,
+  "projects": [
+    {
+      "id": 42,
+      "name": "web",
+      "name_with_namespace": "acme / web",
+      "path": "web",
+      "path_with_namespace": "acme/web"
+    }
+  ],
+  "revision": null,
+  "tag_list": [
+    "docker",
+    "linux"
+  ],
+  "version": null,
+  "access_level": "not_protected",
+  "maximum_timeout": 3600
+}

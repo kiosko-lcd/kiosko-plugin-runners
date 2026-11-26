@@ -1,0 +1,16 @@
+[
+  {
+    "id": 42,
+    "name": "web",
+    "path": "web",
+    "path_with_namespace": "acme/web",
+    "last_activity_at": "2026-11-26T20:00:00Z"
+  },
+  {
+    "id": 43,
+    "name": "api",
+    "path": "api",
+    "path_with_namespace": "acme/tools/api",
+    "last_activity_at": "2026-11-26T19:00:00Z"
+  }
+]
