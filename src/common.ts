@@ -1,7 +1,7 @@
 /** What the widgets share: their source, colours, words and a few drawing helpers. */
 import type { Graphics, RenderContext } from '@kiosko/sdk';
-import { bytesText, pctText, rateText } from './format.ts';
-import { API_ERROR, BUSY, CLEAN_FAILED, CLEAN_MISSING, CLEAN_NEVER, CLEANED, ENGINE_ERROR, FREE, FULL_IN, FULL_NOW, IDLE, JOB, JOBS, NEVER, NO_RUNNER, OFFLINE, OLDEST, ONLINE, PAUSED, PENDING, RUNNING, STALE, STATE, UP_FOR, fill } from './labels.ts';
+import { bytesParts, bytesText, pctText, rateText } from './format.ts';
+import { ADDED_IN, DISK_FREE, ON_DISK, REMOTE_DISK, API_ERROR, BUSY, GROWTH_DATA, CLEAN_FAILED, CLEAN_MISSING, CLEAN_NEVER, CLEANED, ENGINE_ERROR, FREE, FULL_IN, FULL_NOW, IDLE, JOB, JOBS, NEVER, NO_RUNNER, OFFLINE, OLDEST, ONLINE, PAUSED, PENDING, RUNNING, STALE, STATE, UP_FOR, fill } from './labels.ts';
 import type { ApiData, ApiRunner, LocalData, RunnerContainer, RunnersData } from './types.ts';
 
 export const SOURCE = 'runners/runners';
@@ -222,7 +222,7 @@ export function diskLevel(d: RunnersData): Level {
 
 export function growthLevel(d: RunnersData): Level {
   const g = d.local?.growth.perDay;
-  if (g == null) return 'none';
+  if (g == null || !d.local?.growth.reliable) return 'none';
   return g > d.thresholds.growthMax ? 'warn' : 'ok';
 }
 
@@ -241,10 +241,22 @@ export function fullText(ctx: Ctx, d: RunnersData): string | null {
   return fill(ctx.t(FULL_IN), { d: ctx.fmt.duration(Math.max(3_600_000, f * 86_400_000), { compact: true }) });
 }
 
+/**
+ * "+28.5 GB/day" once there are 12 h of history; before that what was
+ * added so far, "+2.5 GB in 2 h", with no rate (one big job would read as
+ * tens of GB a day), or "measuring growth (2 h of data)"; null with none.
+ */
 export function growthText(ctx: Ctx, d: RunnersData): string | null {
-  const g = d.local?.growth.perDay;
-  return g == null ? null : rateText(ctx.locale, g);
+  const g = d.local?.growth;
+  if (!g || g.spanMs <= 0) return null;
+  if (g.reliable && g.perDay !== null) return rateText(ctx.locale, g.perDay);
+  const span = ctx.fmt.duration(Math.max(60_000, g.spanMs), { compact: true });
+  if (g.added >= 1e8) return fill(ctx.t(ADDED_IN), { v: `+${bytesText(ctx.locale, g.added)}`, d: span });
+  return fill(ctx.t(GROWTH_DATA), { d: span });
 }
+
+/** Whether `growthText` is a rate (bold, coloured by level) or a neutral note. */
+export const growthIsRate = (d: RunnersData): boolean => !!d.local?.growth.reliable && d.local.growth.perDay !== null;
 
 /** "cleaned 16 h ago", "cleanup failed"…, with its level. */
 export function timerParts(ctx: Ctx, d: RunnersData): Part | null {
@@ -342,4 +354,36 @@ export function drawSpark(g: Graphics, ctx: Ctx, values: (number | null)[], x: n
   g.fillStyle = color;
   for (const b of bars) if (values[b.index] !== null && b.h > 0) g.fillRect(x + b.x, y + b.y, b.w, b.h);
   g.restore();
+}
+
+// ── Shared pieces of the widgets ─────────────────────────────────────────────
+
+/** The runner line (or, without Docker, the APIs' summary), with its level. */
+export function headLine(ctx: Ctx, d: RunnersData): Line | null {
+  if (d.local) {
+    const r = runnerParts(ctx, d.local);
+    return { parts: r.parts, level: r.level };
+  }
+  const apis = ([['GitLab', d.gitlab], ['GitHub', d.github]] as const).filter(([, a]) => a);
+  if (!apis.length) return null;
+  const s = apis.map(([n, a]) => apiSummary(ctx, n, a!));
+  return { parts: s.flatMap((x) => x.parts), level: worst(s.map((x) => x.level)) };
+}
+
+/** The caches on disk and the free disk as figures (for `compact`, and under `now` when it has room). */
+export function storageFigures(ctx: Ctx, d: RunnersData): Figure[] {
+  const out: Figure[] = [];
+  const l = d.local;
+  if (l?.sizes) {
+    const [v, u] = bytesParts(ctx.locale, l.sizes.total.bytes);
+    const g = growthText(ctx, d);
+    out.push({ label: ctx.t(ON_DISK), value: v, unit: u, sub: g ? [{ text: g, ...(growthIsRate(d) ? { color: levelInk(ctx, growthLevel(d)) } : {}) }] : [], level: 'none' });
+  }
+  if (l?.disk) {
+    const [v, u] = bytesParts(ctx.locale, l.disk.freeBytes);
+    const full = fullText(ctx, d);
+    const level = diskLevel(d);
+    out.push({ label: ctx.t(DISK_FREE), value: v, unit: u, sub: full ? [{ text: full, color: levelInk(ctx, level) }] : [], level: level === 'ok' ? 'none' : level });
+  } else if (l?.remote) out.push({ label: ctx.t(REMOTE_DISK), value: '—', level: 'none' });
+  return out;
 }

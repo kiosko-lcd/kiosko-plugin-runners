@@ -67,6 +67,10 @@ export interface Growth {
   netPerDay: number | null;
   /** How much history the figures rest on, ms. */
   spanMs: number;
+  /** Bytes added (increases only) over `spanMs`: what is shown before the rate is reliable. */
+  added: number;
+  /** Enough history (12 h) for a rate a day and a projection; before that one big job would read as tens of GB a day. */
+  reliable: boolean;
 }
 
 export interface DiskSpace {

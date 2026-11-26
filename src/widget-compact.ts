@@ -5,11 +5,10 @@
  * or one line in a strip.
  */
 import { defineWidget, type Graphics } from '@kiosko/sdk';
-import { clamp, clipped, dataOf, diskLevel, drawFigure, figureBig, drawLines, drawMessage, freeText, fullText, growthLevel, growthText, levelInk, MIN_PX, pendingParts, runnerParts, runningNow, jobsWord, SOURCE, type Ctx, type Figure, type Part } from './common.ts';
+import { clamp, clipped, dataOf, diskLevel, drawFigure, figureBig, drawLines, drawMessage, freeText, headLine, storageFigures, fullText, growthIsRate, growthLevel, growthText, levelInk, MIN_PX, pendingParts, runnerParts, runningNow, jobsWord, SOURCE, type Ctx, type Figure, type Part } from './common.ts';
 import { demoData } from './demo.ts';
 import { bytesParts } from './format.ts';
 import { L } from './i18n.ts';
-import { headLine } from './widget-now.ts';
 import { DISK_FREE, IDLE, JOBS_RUNNING, NOTHING, NOTHING_HOW, ON_DISK, REMOTE_DISK, WAITING } from './labels.ts';
 import type { RunnersData } from './types.ts';
 
@@ -22,18 +21,7 @@ export function figures(ctx: Ctx, d: RunnersData): Figure[] {
     const pending = pendingParts(ctx, d);
     out.push({ label: ctx.t(JOBS_RUNNING), value: n === null ? '—' : String(n), sub: pending.length ? pending : (state?.parts.slice(0, 2) ?? head?.parts.slice(0, 2) ?? []), level: head?.level === 'bad' ? 'bad' : 'none' });
   }
-  const l = d.local;
-  if (l?.sizes) {
-    const [v, u] = bytesParts(ctx.locale, l.sizes.total.bytes);
-    const g = growthText(ctx, d);
-    out.push({ label: ctx.t(ON_DISK), value: v, unit: u, sub: g ? [{ text: g, color: levelInk(ctx, growthLevel(d)) }] : [], level: 'none' });
-  }
-  if (l?.disk) {
-    const [v, u] = bytesParts(ctx.locale, l.disk.freeBytes);
-    const full = fullText(ctx, d);
-    const level = diskLevel(d);
-    out.push({ label: ctx.t(DISK_FREE), value: v, unit: u, sub: full ? [{ text: full, color: levelInk(ctx, level) }] : [], level: level === 'ok' ? 'none' : level });
-  } else if (l?.remote) out.push({ label: ctx.t(REMOTE_DISK), value: '—', level: 'none' });
+  out.push(...storageFigures(ctx, d));
   return out;
 }
 
@@ -56,7 +44,7 @@ function render(g: Graphics, ctx: Ctx): void {
     const second: Part[] = [];
     if (l?.sizes) second.push({ text: bytesParts(ctx.locale, l.sizes.total.bytes).join(' '), color: ctx.theme.colors.ink, bold: true });
     const g2 = growthText(ctx, d);
-    if (g2) second.push({ text: g2, color: levelInk(ctx, growthLevel(d)) });
+    if (g2) second.push({ text: g2, ...(growthIsRate(d) ? { color: levelInk(ctx, growthLevel(d)) } : {}) });
     const free = freeText(ctx, d);
     if (free) second.push({ text: free, color: levelInk(ctx, diskLevel(d)) });
     const full = fullText(ctx, d);

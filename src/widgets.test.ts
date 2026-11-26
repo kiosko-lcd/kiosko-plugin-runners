@@ -20,7 +20,7 @@ const WIDGETS = [now, cache, compact] as WidgetDefinition<any, any>[];
 function variants(): [string, RunnersData][] {
   const d = demoData(NOW);
   const L = d.local!;
-  const first: RunnersData = { ...d, local: { ...L, sizes: null, history: [], growth: { perDay: null, netPerDay: null, spanMs: 0 }, fullInDays: null, nextSizesAt: NOW + 50_000 } };
+  const first: RunnersData = { ...d, local: { ...L, sizes: null, history: [], growth: { perDay: null, netPerDay: null, spanMs: 0, added: 0, reliable: false }, fullInDays: null, nextSizesAt: NOW + 50_000 } };
   const measuring: RunnersData = { ...d, local: { ...L, sizes: null, measuring: true, nextSizesAt: null, history: [] } };
   const down: RunnersData = { ...d, local: { ...L, error: 'not-running', runners: [], jobs: [], sizes: null, disk: null, history: [] }, gitlab: null, github: null, metrics: null };
   const stopped: RunnersData = { ...d, local: { ...L, runners: [{ ...L.runners[0]!, state: 'exited', status: 'Exited (137) 2 minutes ago' }], jobs: [] } };
@@ -122,4 +122,26 @@ test('before any data: a waiting message', () => {
     const r = renderWidget(w, { size: { w: 320, h: 200 }, locale: 'en', demo: false });
     assert.deepEqual(r.texts, ['Reading the runners…']);
   }
+});
+
+test('growth on thin history: what was added and in how long, neutral, no "full in"; a rate from 12 h on', () => {
+  const d = demoData(NOW);
+  const L = d.local!;
+  const thin: RunnersData = { ...d, local: { ...L, growth: { perDay: 27.8e9, netPerDay: 27.8e9, spanMs: 2.2 * 3_600_000, added: 2.5e9, reliable: false }, fullInDays: null } };
+  for (const w of [cache, compact]) {
+    const r = renderWidget(w, { size: { w: 320, h: 480 }, locale: 'es', now: NOW, sources: { [SOURCE]: thin } });
+    const all = r.texts.join(' | ');
+    assert.ok(r.texts.some((t) => t === '+2,5 GB en 2 h 12'), all);
+    assert.ok(!/GB\/día|lleno en/.test(all), all);
+  }
+  const flat: RunnersData = { ...d, local: { ...L, growth: { perDay: 0, netPerDay: 0, spanMs: 2 * 3_600_000, added: 0, reliable: false }, fullInDays: null } };
+  const f = renderWidget(cache, { size: { w: 320, h: 480 }, locale: 'en', now: NOW, sources: { [SOURCE]: flat } });
+  assert.ok(f.texts.includes('measuring growth (2 h of data)'), f.texts.join(' | '));
+  const r = renderWidget(cache, { size: { w: 320, h: 480 }, locale: 'es', now: NOW });
+  assert.ok(r.texts.includes('+28,5 GB/día'), r.texts.join(' | '));
+});
+
+test('now: a tall tile shows the caches and free disk under the runner', () => {
+  const r = renderWidget(now, { size: { w: 172, h: 320 }, locale: 'en', now: NOW });
+  assert.ok(r.texts.includes('27.9') && r.texts.includes('48.3'), r.texts.join(' | '));
 });

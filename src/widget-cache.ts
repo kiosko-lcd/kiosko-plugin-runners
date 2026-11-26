@@ -7,7 +7,7 @@
  * it is full; and when the cleanup timer last ran.
  */
 import { defineWidget, type Graphics } from '@kiosko/sdk';
-import { bar, clamp, clipped, dataOf, diskLevel, drawLines, drawMessage, drawSpark, fitSize, freeText, fullText, growthLevel, growthText, levelColor, levelInk, MIN_PX, SOURCE, timerParts, type Ctx, type Line, type Part } from './common.ts';
+import { bar, clamp, clipped, dataOf, diskLevel, drawLines, drawMessage, drawSpark, fitSize, freeText, fullText, growthIsRate, growthLevel, growthText, levelColor, levelInk, MIN_PX, SOURCE, timerParts, type Ctx, type Line, type Part } from './common.ts';
 import { demoData } from './demo.ts';
 import { bytesParts, bytesText, pctText } from './format.ts';
 import { downsample } from './history.ts';
@@ -31,6 +31,7 @@ function legend(ctx: Ctx, d: RunnersData): Part[] {
 function growthPart(ctx: Ctx, d: RunnersData): Part {
   const g = growthText(ctx, d);
   if (g === null) return { text: ctx.t(GROWTH_SOON) };
+  if (!growthIsRate(d)) return { text: g };
   if ((d.local!.growth.perDay ?? 0) <= 0) return { text: ctx.t(NOT_GROWING) };
   return { text: g, color: levelInk(ctx, growthLevel(d)), bold: true };
 }

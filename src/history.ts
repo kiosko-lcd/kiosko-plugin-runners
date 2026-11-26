@@ -11,8 +11,10 @@
 import type { Growth, SizePoint } from './types.ts';
 
 export const DAY = 86_400_000;
-/** Growth needs at least this much history to be shown. */
+/** Growth needs at least this much history to be worked out at all. */
 export const MIN_SPAN_MS = 2 * 3_600_000;
+/** And this much to be shown as a rate a day, projected and alerted on. */
+export const RELIABLE_SPAN_MS = 12 * 3_600_000;
 /** Kept on disk. */
 export const KEEP_MS = 7 * DAY;
 export const MAX_POINTS = 2000;
@@ -30,16 +32,16 @@ export function growthOf(points: SizePoint[], now: number, windowMs = DAY): Grow
   // The point just before the window, so the first increase in it counts.
   const before = points.filter((p) => p.at < now - windowMs).sort((a, b) => b.at - a.at)[0];
   if (before && ps.length && ps[0]!.at - before.at < windowMs / 4) ps.unshift(before);
-  if (ps.length < 2) return { perDay: null, netPerDay: null, spanMs: 0 };
+  if (ps.length < 2) return { perDay: null, netPerDay: null, spanMs: 0, added: 0, reliable: false };
   const span = ps[ps.length - 1]!.at - ps[0]!.at;
-  if (span < MIN_SPAN_MS) return { perDay: null, netPerDay: null, spanMs: span };
   let up = 0;
   for (let i = 1; i < ps.length; i++) up += Math.max(0, ps[i]!.bytes - ps[i - 1]!.bytes);
+  if (span < MIN_SPAN_MS) return { perDay: null, netPerDay: null, spanMs: span, added: up, reliable: false };
   const net = ps[ps.length - 1]!.bytes - ps[0]!.bytes;
-  return { perDay: (up / span) * DAY, netPerDay: (net / span) * DAY, spanMs: span };
+  return { perDay: (up / span) * DAY, netPerDay: (net / span) * DAY, spanMs: span, added: up, reliable: span >= RELIABLE_SPAN_MS };
 }
 
-/** Days until `freeBytes` are gone at `perDay`; null when not growing. */
+/** Days until `freeBytes` are gone at `perDay`; null when not growing (callers pass null before the rate is reliable). */
 export function fullInDays(freeBytes: number | null | undefined, perDay: number | null | undefined): number | null {
   if (freeBytes == null || perDay == null || !(perDay > 0)) return null;
   return Math.max(0, freeBytes / perDay);

@@ -42,9 +42,6 @@ function minutesText(l: Lang, ms: number): string {
   return `${intText(l, m)} ${w(l, { en: 'min', es: 'min', de: 'Min.', 'zh-Hans': '分钟', 'zh-Hant': '分鐘' })}`;
 }
 
-/** History needed before the growth alert speaks. */
-export const GROWTH_ALERT_SPAN_MS = 12 * 3_600_000;
-
 const dayOf = (at: number) => new Date(at).toISOString().slice(0, 10);
 
 export function runnerAlerts(data: RunnersData | undefined, now: number): Alert[] {
@@ -98,7 +95,7 @@ export function runnerAlerts(data: RunnersData | undefined, now: number): Alert[
 
   const g = local?.growth.perDay;
   // Not from a couple of hours: one big job would read as tens of GB a day.
-  if (g != null && g > t.growthMax && (local?.growth.spanMs ?? 0) >= GROWTH_ALERT_SPAN_MS) {
+  if (g != null && g > t.growthMax && local?.growth.reliable) {
     out.push({
       id: `growth-${dayOf(now)}`,
       level: 'warn',

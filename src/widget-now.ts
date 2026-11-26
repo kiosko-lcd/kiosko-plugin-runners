@@ -5,7 +5,7 @@
  * for how long, and what GitLab and GitHub say of their runners.
  */
 import { defineWidget, type Graphics } from '@kiosko/sdk';
-import { apiSummary, clamp, clipped, dataOf, drawLines, drawMessage, drawParts, fitSize, levelInk, MIN_PX, pendingParts, runnerParts, runningNow, runningText, jobsWord, SOURCE, worst, type Ctx, type Line, type Part } from './common.ts';
+import { headLine, storageFigures, drawFigure, figureBig, apiSummary, clamp, clipped, dataOf, drawLines, drawMessage, drawParts, fitSize, levelInk, MIN_PX, pendingParts, runnerParts, runningNow, runningText, jobsWord, SOURCE, worst, type Ctx, type Line, type Part } from './common.ts';
 import { demoData } from './demo.ts';
 import { L } from './i18n.ts';
 import { JOBS, NOTHING, NOTHING_HOW, RUNNING, WAITING } from './labels.ts';
@@ -19,17 +19,6 @@ export function shortRef(ref: string | null): string | null {
   const pr = /^refs\/pull\/(\d+)\//.exec(ref);
   if (pr) return `#${pr[1]}`;
   return ref.replace(/^refs\/(heads|tags)\//, '');
-}
-
-export function headLine(ctx: Ctx, d: RunnersData): Line | null {
-  if (d.local) {
-    const r = runnerParts(ctx, d.local);
-    return { parts: r.parts, level: r.level };
-  }
-  const apis = ([['GitLab', d.gitlab], ['GitHub', d.github]] as const).filter(([, a]) => a);
-  if (!apis.length) return null;
-  const s = apis.map(([n, a]) => apiSummary(ctx, n, a!));
-  return { parts: s.flatMap((x) => x.parts), level: worst(s.map((x) => x.level)) };
 }
 
 /** The lines under the big number: the jobs, the waiting ones, the APIs, the metrics. */
@@ -104,7 +93,7 @@ function render(g: Graphics, ctx: Ctx): void {
   let y = drawLines(g, ctx, [head], box.x, box.y, box.w, box.y + box.h, s);
   if (big) {
     const room = box.y + box.h - y;
-    const want = rows.length ? Math.min(room * 0.34, box.w / 3.2) : Math.min(room * 0.7, box.w / 2.6);
+    const want = Math.min(room * (rows.length ? 0.34 : 0.4), box.w / 3.2, 110);
     const label = { size: clamp(Math.round(s * 0.95), MIN_PX, 20), family: theme.fonts.sans, color: c.inkDim };
     const lw = kit.measureTracked(g, big.label, label);
     const sideBySide = box.w - lw > want * 1.4;
@@ -122,7 +111,18 @@ function render(g: Graphics, ctx: Ctx): void {
       y += s * 0.3;
     }
   }
-  drawLines(g, ctx, rows, box.x, y, box.w, box.y + box.h, s);
+  y = drawLines(g, ctx, rows, box.x, y, box.w, box.y + box.h, s);
+  // Room left in a tall tile: the caches and the free disk under it.
+  const figs = storageFigures(ctx, d);
+  const left = box.y + box.h - y - s;
+  if (figs.length && left >= s * 5.5) {
+    const across = box.w / figs.length >= 130 && left < s * 11;
+    const fw = across ? (box.w - s) / figs.length : box.w;
+    const fh = Math.min(across ? left : left / figs.length, s * 7);
+    const top = y + s;
+    const big = Math.min(...figs.map((f) => figureBig(g, ctx, f, fw, fh)));
+    figs.forEach((f, i) => drawFigure(g, ctx, f, across ? box.x + i * (fw + s) : box.x, across ? top : top + i * fh, fw, fh, big));
+  }
 }
 
 export const now = defineWidget({

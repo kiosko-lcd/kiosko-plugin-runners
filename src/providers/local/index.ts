@@ -295,7 +295,7 @@ export class LocalReader {
     out.serverVersion = this.info?.serverVersion ?? null;
     out.rootDir = this.info?.rootDir ?? null;
     out.disk = remote ? null : await this.disk(out.rootDir);
-    out.fullInDays = fullInDays(out.disk?.freeBytes, out.growth.perDay);
+    out.fullInDays = out.growth.reliable ? fullInDays(out.disk?.freeBytes, out.growth.perDay) : null;
 
     if (!this.measuring && now >= this.nextSizesAt(o, s.sizes)) {
       this.measuring = true;

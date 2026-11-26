@@ -253,7 +253,10 @@ test('reader: runner, jobs, rootless disk (walking up to a folder it may stat), 
   assert.equal(d.history.length, 6);
   // 0.5 GB every 30 min: 24 GB a day.
   assert.ok(Math.abs(d.growth.perDay! - 24 * GB) < 0.01 * GB, String(d.growth.perDay));
-  assert.ok(Math.abs(d.fullInDays! - 48.3 / 24) < 0.01);
+  // Two and a half hours of data: what was added, but no projection yet.
+  assert.equal(d.growth.reliable, false);
+  assert.ok(Math.abs(d.growth.added - 2.5 * GB) < 1e6, String(d.growth.added));
+  assert.equal(d.fullInDays, null);
   // Every command it ran was on the read-only list, and nothing else was tried.
   for (const [cmd, ...args] of m.state.argv) assert.ok(isReadOnly(cmd!, args), [cmd, ...args].join(' '));
   // The history survives a restart: a new reader shows the last sizes at once and waits for the interval.

@@ -48,6 +48,10 @@ export const FULL_IN = L('full in {d}', 'lleno en {d}', 'voll in {d}', '{d}后�
 export const FULL_NOW = L('disk full', 'disco lleno', 'Platte voll', '磁盘已满', '磁碟已滿');
 export const NOT_GROWING = L('not growing', 'no crece', 'wächst nicht', '未增长', '未增長');
 export const GROWTH_SOON = L('growth: measuring', 'crecimiento: midiendo', 'Wachstum: wird gemessen', '增长：测量中', '增長：測量中');
+/** `{d}`: "2 h" of history so far. */
+export const GROWTH_DATA = L('measuring growth ({d} of data)', 'midiendo crecimiento ({d} de datos)', 'Wachstum wird gemessen ({d} Daten)', '正在测量增长（已有 {d} 数据）', '正在測量增長（已有 {d} 資料）');
+/** `{v}`: "+2.5 GB", `{d}`: "2 h". */
+export const ADDED_IN = L('{v} in {d}', '{v} en {d}', '{v} in {d}', '{d}内 {v}', '{d}內 {v}');
 export const MEASURING = L('Measuring the volumes…', 'Midiendo los volúmenes…', 'Volumes werden gemessen…', '正在测量卷…', '正在測量磁碟區…');
 /** `{d}`: "1 min". */
 export const FIRST_IN = L('First measurement in {d}', 'Primera medida en {d}', 'Erste Messung in {d}', '{d}后首次测量', '{d}後首次測量');

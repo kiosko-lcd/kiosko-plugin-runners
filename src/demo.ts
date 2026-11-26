@@ -76,7 +76,7 @@ export function demoLocal(now: number): LocalData {
     history: history.filter((p) => p.at >= now - 24 * H),
     growth,
     disk,
-    fullInDays: fullInDays(disk.freeBytes, growth.perDay),
+    fullInDays: growth.reliable ? fullInDays(disk.freeBytes, growth.perDay) : null,
     timer: { unit: 'cleanup-runner-cache.timer', found: true, state: 'active', lastAt: now - 16 * H - 15 * 60_000, nextAt: now + 7 * H + 45 * 60_000, result: 'success', exitStatus: 0 },
     config: null,
   };
