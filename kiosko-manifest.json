@@ -9,7 +9,7 @@
     "zh-Hans": "CI Runner",
     "zh-Hant": "CI Runner"
   },
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": {
     "en": "Your CI runners on the panel: whether the GitLab runner container is up and the jobs it runs, what its cache volumes cost on disk and how fast they grow, the free space left where Docker keeps them and when it runs out, and when the cleanup last ran; optionally runner status and waiting jobs from GitLab's API, GitHub Actions self-hosted runners and the runner's Prometheus metrics. Read-only: it never prunes or stops anything.",
     "es": "Tus runners de CI en el panel: si el contenedor del runner de GitLab está en marcha y los trabajos que corre, lo que ocupan en disco sus volúmenes de caché y lo rápido que crecen, el espacio libre que queda donde Docker los guarda y cuándo se acaba, y cuándo corrió la limpieza; opcionalmente el estado de los runners y los trabajos en cola de la API de GitLab, los runners propios de GitHub Actions y las métricas Prometheus del runner. Solo lectura: nunca poda ni para nada.",

@@ -210,6 +210,11 @@ export const cache = defineWidget({
   size: { min: { w: 160, h: 30 }, preferred: { w: 320, h: 240 } },
   sources: [SOURCE],
   redraw: 'minute',
+  /** No Docker runner read (only APIs or metrics): no caches to measure. */
+  empty: ({ sources }) => {
+    const d = dataOf(sources);
+    return !!d && !d.local;
+  },
   render(g, ctx) {
     clipped(g, ctx, () => render(g, ctx));
   },

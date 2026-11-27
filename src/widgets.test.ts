@@ -162,3 +162,22 @@ test('now: a 36 px strip is one status line: the runner, the jobs running, the j
   const en = renderWidget(now, { size: { w: 186, h: 22 }, locale: 'en', now: NOW, sources: { [SOURCE]: Object.fromEntries(variants()).stopped } });
   assert.ok(en.texts.includes('Down'), en.texts.join(' | '));
 });
+
+test('empty: nothing set up passes the turn; an idle runner, Docker down or only the APIs do not; undefined is loading', () => {
+  const st = (d: RunnersData | undefined) => ({ options: {}, data: undefined, sources: { [SOURCE]: d }, now: NOW, working: true }) as never;
+  const v = Object.fromEntries(variants());
+  for (const w of WIDGETS) {
+    assert.equal(w.empty!(st(v.nothing)), true, `${w.id} nothing`);
+    assert.equal(w.empty!(st(v.demo)), false, `${w.id} demo`);
+    assert.equal(w.empty!(st(v.idle)), false, `${w.id} idle`);
+    assert.equal(w.empty!(st(v.down)), false, `${w.id} down`);
+    assert.equal(w.empty!(st(undefined)), false, `${w.id} loading`);
+  }
+  // Only the APIs: jobs to show, no caches.
+  assert.equal(now.empty!(st(v['api only'])), false);
+  assert.equal(compact.empty!(st(v['api only'])), false);
+  assert.equal(cache.empty!(st(v['api only'])), true);
+  // Only the metrics: the jobs running count, nothing else.
+  const metricsOnly: RunnersData = { ...v.nothing!, metrics: demoData(NOW).metrics };
+  assert.equal(compact.empty!(st(metricsOnly)), false);
+});

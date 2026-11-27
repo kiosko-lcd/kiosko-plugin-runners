@@ -17,7 +17,7 @@ import type { Saved, Store } from './providers/local/index.ts';
 import { execRun } from './run.ts';
 import type { RunnersData } from './types.ts';
 
-export const VERSION = '0.1.1';
+export const VERSION = '0.1.2';
 export const AGENT = `kiosko-plugin-runners/${VERSION}`;
 
 const MIN = 60_000;
