@@ -145,3 +145,20 @@ test('now: a tall tile shows the caches and free disk under the runner', () => {
   const r = renderWidget(now, { size: { w: 172, h: 320 }, locale: 'en', now: NOW });
   assert.ok(r.texts.includes('27.9') && r.texts.includes('48.3'), r.texts.join(' | '));
 });
+
+test('now: a tall 320×480 tile keeps every detail line and puts the caches and free disk under them', () => {
+  for (const locale of LOCALES) {
+    const r = renderWidget(now, { size: { w: 288, h: 401 }, locale, now: NOW });
+    const all = r.texts.join(' | ');
+    for (const t of ['web', 'api', 'GitLab', 'GitHub']) assert.ok(r.texts.includes(t), `${locale}: ${t} in ${all}`);
+    assert.ok(r.texts.includes('2/4'), `${locale}: 2/4 in ${all}`);
+    assert.ok(r.texts.some((t) => /^27[.,]9$/.test(t)) && r.texts.some((t) => /^48[.,]3$/.test(t)), `${locale}: figures in ${all}`);
+  }
+});
+
+test('now: a 36 px strip is one status line: the runner, the jobs running, the jobs waiting', () => {
+  const es = renderWidget(now, { size: { w: 186, h: 22 }, locale: 'es', now: NOW });
+  assert.ok(es.texts.includes('En marcha') && es.texts.includes('2 trabajos') && es.texts.includes('3 en cola'), es.texts.join(' | '));
+  const en = renderWidget(now, { size: { w: 186, h: 22 }, locale: 'en', now: NOW, sources: { [SOURCE]: Object.fromEntries(variants()).stopped } });
+  assert.ok(en.texts.includes('Down'), en.texts.join(' | '));
+});
