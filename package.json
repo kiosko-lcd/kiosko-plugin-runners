@@ -1,6 +1,6 @@
 {
   "name": "kiosko-plugin-runners",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Your CI runners on a small USB LCD panel: whether the GitLab runner container is up, the jobs running now, how much disk its cache volumes take and how fast they grow, the free space left where Docker keeps them and when it runs out, and when the cleanup last ran; optionally runner status and pending jobs from the GitLab API, GitHub Actions self-hosted runners and the runner's Prometheus metrics.",
   "type": "module",
   "license": "MIT",

@@ -89,40 +89,108 @@ function render(g: Graphics, ctx: Ctx): void {
     return;
   }
 
-  // Stacked: the runner line, the big number with its label, then the details.
-  let y = drawLines(g, ctx, [head], box.x, box.y, box.w, box.y + box.h, s);
-  if (big) {
-    const room = box.y + box.h - y;
-    const want = Math.min(room * (rows.length ? 0.34 : 0.4), box.w / 3.2, 110);
-    const label = { size: clamp(Math.round(s * 0.95), MIN_PX, 20), family: theme.fonts.sans, color: c.inkDim };
-    const lw = kit.measureTracked(g, big.label, label);
-    const sideBySide = box.w - lw > want * 1.4;
-    let bs = fitSize(g, ctx, big.value, box.w - (sideBySide ? lw + s : 0), clamp(Math.round(want), MIN_PX, 110));
-    if (bs * 1.1 > room) bs = Math.max(MIN_PX, Math.floor(room / 1.1));
-    if (room >= bs * 1.1 + (sideBySide ? 0 : label.size * 1.4)) {
-      const base = y + bs * 0.95;
-      const w = kit.drawTracked(g, big.value, box.x, base, { size: bs, family: theme.fonts.sansBold, color: c.ink });
-      if (sideBySide) kit.drawTracked(g, big.label, box.x + w + s * 0.6, base, label);
-      y += bs * 1.12;
-      if (!sideBySide) {
-        drawParts(g, ctx, [{ text: big.label }], box.x, y + label.size, box.w, label.size);
-        y += label.size * 1.4;
-      }
-      y += s * 0.3;
-    }
-  }
-  y = drawLines(g, ctx, rows, box.x, y, box.w, box.y + box.h, s);
-  // Room left in a tall tile: the caches and the free disk under it.
+  // Stacked: the runner line, the big number with its label, the details and,
+  // in a tall tile, the caches and the free disk at the bottom.
   const figs = storageFigures(ctx, d);
-  const left = box.y + box.h - y - s;
-  if (figs.length && left >= s * 5.5) {
-    const across = box.w / figs.length >= 130 && left < s * 11;
-    const fw = across ? (box.w - s) / figs.length : box.w;
-    const fh = Math.min(across ? left : left / figs.length, s * 7);
-    const top = y + s;
-    const big = Math.min(...figs.map((f) => figureBig(g, ctx, f, fw, fh)));
-    figs.forEach((f, i) => drawFigure(g, ctx, f, across ? box.x + i * (fw + s) : box.x, across ? top : top + i * fh, fw, fh, big));
+  const bottom = box.y + box.h;
+  const across = figs.length > 0 && box.w / figs.length >= 130;
+  // How much the figures need: one row of them across, or one over another.
+  const need = across ? s * 4.6 : s * 5.5;
+  let plan = stackPlan(g, ctx, head, big, rows, bottom, s, false);
+  // They don't fit under the details at full size: give them the bottom and
+  // shrink the big number, as long as every detail line still shows.
+  if (figs.length && bottom - plan.end - s < need) {
+    const room = stackPlan(g, ctx, head, big, rows, bottom - need - s, s, true);
+    if (room.fits) plan = room;
   }
+  const y = paintStack(g, ctx, head, big, rows, plan, bottom, s);
+  const left = bottom - y - s;
+  if (figs.length && left >= need - 0.5) {
+    const row = across && left < s * 11;
+    const fw = row ? (box.w - s) / figs.length : box.w;
+    const fh = Math.min(row ? left : left / figs.length, s * 7);
+    const top = y + s;
+    const size = Math.min(...figs.map((f) => figureBig(g, ctx, f, fw, fh)));
+    figs.forEach((f, i) => drawFigure(g, ctx, f, row ? box.x + i * (fw + s) : box.x, row ? top : top + i * fh, fw, fh, size));
+  }
+}
+
+/** Where the stacked layout puts things: the big number's size, the label beside it or under it, where it ends. */
+interface StackPlan {
+  bs: number | null;
+  sideBySide: boolean;
+  end: number;
+  /** Every detail line shows. */
+  fits: boolean;
+}
+
+const LINE = 1.42;
+
+function bigLabel(ctx: Ctx, s: number) {
+  return { size: clamp(Math.round(s * 0.95), MIN_PX, 20), family: ctx.theme.fonts.sans, color: ctx.theme.colors.inkDim };
+}
+
+/**
+ * Lays out the stacked tile down to `bottom` without painting. With
+ * `keepRows`, the big number gives way to the detail lines: it is made
+ * small enough for all of them to fit under it (else `fits` is false).
+ */
+function stackPlan(g: Graphics, ctx: Ctx, head: Line, big: { value: string; label: string } | null, rows: Line[], bottom: number, s: number, keepRows: boolean): StackPlan {
+  const { box, kit } = ctx;
+  const lh = s * LINE;
+  const y = box.y + lh;
+  const rowsH = rows.filter((r) => r.parts.length).length * lh;
+  if (!big) return { bs: null, sideBySide: false, end: y + rowsH, fits: y + rowsH <= bottom + 0.5 };
+  const room = bottom - y;
+  const want = Math.min(room * (rows.length ? 0.34 : 0.4), box.w / 3.2, 110);
+  const label = bigLabel(ctx, s);
+  const lw = kit.measureTracked(g, big.label, label);
+  const sized = (sideBySide: boolean, max: number) => {
+    let bs = fitSize(g, ctx, big.value, box.w - (sideBySide ? lw + s : 0), clamp(Math.round(max), MIN_PX, 110));
+    if (bs * 1.1 > room) bs = Math.max(MIN_PX, Math.floor(room / 1.1));
+    return bs;
+  };
+  const height = (bs: number, sideBySide: boolean) => bs * 1.12 + (sideBySide ? 0 : label.size * 1.4) + s * 0.3;
+  if (keepRows) {
+    // As big as the room left by the lines allows, and not smaller than two lines of text.
+    const avail = room - rowsH;
+    for (const sideBySide of [true, false]) {
+      const max = Math.min(want, (avail - s * 0.3 - (sideBySide ? 0 : label.size * 1.4)) / 1.12);
+      if (max < s * 1.6) continue;
+      const bs = sized(sideBySide, max);
+      if (sideBySide && box.w - lw <= bs * 1.4) continue;
+      const end = y + height(bs, sideBySide) + rowsH;
+      return { bs, sideBySide, end, fits: end <= bottom + 0.5 };
+    }
+    return { bs: null, sideBySide: false, end: bottom, fits: false };
+  }
+  const sideBySide = box.w - lw > want * 1.4;
+  const bs = sized(sideBySide, want);
+  const shown = room >= bs * 1.1 + (sideBySide ? 0 : label.size * 1.4);
+  const top = y + (shown ? height(bs, sideBySide) : 0);
+  // The lines that fit under it.
+  const fitting = Math.max(0, Math.min(rowsH / lh, Math.floor((bottom - top + 0.5) / lh)));
+  return { bs: shown ? bs : null, sideBySide, end: top + fitting * lh, fits: top + rowsH <= bottom + 0.5 };
+}
+
+/** Paints the stacked layout as planned; returns where the lines end. */
+function paintStack(g: Graphics, ctx: Ctx, head: Line, big: { value: string; label: string } | null, rows: Line[], plan: StackPlan, bottom: number, s: number): number {
+  const { box, kit, theme } = ctx;
+  let y = drawLines(g, ctx, [head], box.x, box.y, box.w, box.y + box.h, s);
+  if (big && plan.bs) {
+    const bs = plan.bs;
+    const label = bigLabel(ctx, s);
+    const base = y + bs * 0.95;
+    const w = kit.drawTracked(g, big.value, box.x, base, { size: bs, family: theme.fonts.sansBold, color: theme.colors.ink });
+    if (plan.sideBySide) kit.drawTracked(g, big.label, box.x + w + s * 0.6, base, label);
+    y += bs * 1.12;
+    if (!plan.sideBySide) {
+      drawParts(g, ctx, [{ text: big.label }], box.x, y + label.size, box.w, label.size);
+      y += label.size * 1.4;
+    }
+    y += s * 0.3;
+  }
+  return drawLines(g, ctx, rows, box.x, y, box.w, bottom, s);
 }
 
 export const now = defineWidget({
