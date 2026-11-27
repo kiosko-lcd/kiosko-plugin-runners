@@ -209,6 +209,11 @@ export const now = defineWidget({
   size: { min: { w: 160, h: 30 }, preferred: { w: 320, h: 200 } },
   sources: [SOURCE],
   redraw: 'minute',
+  /** No Docker runner and no GitLab or GitHub API set up: the "No runner set up" message. */
+  empty: ({ sources }) => {
+    const d = dataOf(sources);
+    return !!d && !d.local && !d.gitlab && !d.github;
+  },
   render(g, ctx) {
     clipped(g, ctx, () => render(g, ctx));
   },

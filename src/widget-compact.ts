@@ -83,6 +83,11 @@ export const compact = defineWidget({
   size: { min: { w: 160, h: 30 }, preferred: { w: 480, h: 140 } },
   sources: [SOURCE],
   redraw: 'minute',
+  /** No runner, no API and no metrics to count jobs from: the "No runner set up" message. */
+  empty: ({ sources }) => {
+    const d = dataOf(sources);
+    return !!d && !d.local && !d.gitlab && !d.github && runningNow(d) === null;
+  },
   render(g, ctx) {
     clipped(g, ctx, () => render(g, ctx));
   },
